@@ -1,5 +1,5 @@
-DATABASE NAME: fertilizer_inventory;
-
+CREATE DATABASE IF NOT EXISTS fertilizer_inventory;
+USE fertilizer_inventory;
 -- USERS TABLE
 CREATE TABLE users (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -9,7 +9,6 @@ CREATE TABLE users (
     phone VARCHAR(15) NOT NULL,
     password VARCHAR(255) NOT NULL
 );
-
 -- SUPPLIERS TABLE
 CREATE TABLE suppliers (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -21,7 +20,6 @@ CREATE TABLE suppliers (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     license_number VARCHAR(50)
 );
-
 -- CUSTOMERS TABLE
 CREATE TABLE customers (
     customer_id VARCHAR(10) NOT NULL PRIMARY KEY,
@@ -31,23 +29,22 @@ CREATE TABLE customers (
     address TEXT,
     notes TEXT,
     total_purchases INT DEFAULT 0,
-    total_spent DECIMAL(10,2) DEFAULT 0.00,
-    outstanding_credit DECIMAL(10,2) DEFAULT 0.00,
+    total_spent DECIMAL(10, 2) DEFAULT 0.00,
+    outstanding_credit DECIMAL(10, 2) DEFAULT 0.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     credit_score INT DEFAULT 100
 );
-
 -- CREDIT SALES TABLE
 CREATE TABLE credit_sales (
     credit_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     customer_id VARCHAR(10),
     user_id INT,
-    credit_amount DECIMAL(10,2),
-    paid_amount DECIMAL(10,2),
-    remaining_amount DECIMAL(10,2) DEFAULT 0.00,
-    interest_rate DECIMAL(5,2) DEFAULT 2.00,
-    total_interest_amount DECIMAL(10,2) DEFAULT 0.00,
+    credit_amount DECIMAL(10, 2),
+    paid_amount DECIMAL(10, 2),
+    remaining_amount DECIMAL(10, 2) DEFAULT 0.00,
+    interest_rate DECIMAL(5, 2) DEFAULT 2.00,
+    total_interest_amount DECIMAL(10, 2) DEFAULT 0.00,
     due_date DATE,
     last_interest_calculation DATE,
     overdue_days INT DEFAULT 0,
@@ -60,17 +57,15 @@ CREATE TABLE credit_sales (
     duration_days INT DEFAULT 30,
     credit_date DATE DEFAULT CURDATE()
 );
-
 -- CREDIT PRODUCTS TABLE
 CREATE TABLE credit_products (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     credit_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity_unit VARCHAR(20),
-    price_per_unit DECIMAL(10,2),
+    price_per_unit DECIMAL(10, 2),
     number_of_items INT
 );
-
 -- CREDIT SCORE HISTORY TABLE
 CREATE TABLE credit_score_history (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -79,20 +74,18 @@ CREATE TABLE credit_score_history (
     reason VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 -- SALES TABLE
 CREATE TABLE sales (
     sale_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     customer_id VARCHAR(10),
-    total_amount DECIMAL(10,2),
+    total_amount DECIMAL(10, 2),
     payment_status ENUM('Paid', 'Credit', 'Unpaid', 'Partially Paid'),
     sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    discount DECIMAL(10,2) DEFAULT 0.00,
-    final_amount DECIMAL(10,2) DEFAULT 0.00,
+    discount DECIMAL(10, 2) DEFAULT 0.00,
+    final_amount DECIMAL(10, 2) DEFAULT 0.00,
     is_archived TINYINT(1) DEFAULT 0
 );
-
 -- STOCK TABLE
 CREATE TABLE stock (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -100,44 +93,41 @@ CREATE TABLE stock (
     supplier_id INT NOT NULL,
     product_name VARCHAR(255),
     category VARCHAR(100),
-    quantity DECIMAL(10,2) DEFAULT 0.00,
+    quantity DECIMAL(10, 2) DEFAULT 0.00,
     quantity_unit VARCHAR(10),
     number_of_items INT,
     expiry_date DATE,
-    actual_price DECIMAL(10,2),
-    selling_price DECIMAL(10,2),
-    fixed_quantity DECIMAL(10,2),
+    actual_price DECIMAL(10, 2),
+    selling_price DECIMAL(10, 2),
+    fixed_quantity DECIMAL(10, 2),
     image_url VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    low_stock_threshold DECIMAL(10,2) DEFAULT 5.00,
+    low_stock_threshold DECIMAL(10, 2) DEFAULT 5.00,
     package_size VARCHAR(100)
 );
-
 -- CREDIT INTEREST CALCULATIONS TABLE
 CREATE TABLE credit_interest_calculations (
     calculation_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     credit_id INT NOT NULL,
     calculation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    principal_amount DECIMAL(10,2) NOT NULL,
-    interest_rate DECIMAL(5,2) NOT NULL,
-    interest_amount DECIMAL(10,2),
+    principal_amount DECIMAL(10, 2) NOT NULL,
+    interest_rate DECIMAL(5, 2) NOT NULL,
+    interest_amount DECIMAL(10, 2),
     month_name VARCHAR(20),
     year INT,
-    remaining_balance DECIMAL(10,2) DEFAULT 0.00,
+    remaining_balance DECIMAL(10, 2) DEFAULT 0.00,
     duration_days INT
 );
-
 -- CREDIT PAYMENTS TABLE
 CREATE TABLE credit_payments (
     payment_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     credit_id INT NOT NULL,
     user_id INT NOT NULL,
-    payment_amount DECIMAL(10,2),
+    payment_amount DECIMAL(10, 2),
     payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     payment_notes TEXT
 );
-
 CREATE TABLE orders (
     id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
@@ -156,11 +146,11 @@ CREATE TABLE sale_items (
     id INT NOT NULL AUTO_INCREMENT,
     sale_id INT NOT NULL,
     product_id INT NOT NULL,
-    quantity DECIMAL(10,2) NOT NULL,
-    unit_price DECIMAL(10,2) NOT NULL,
-    total_price DECIMAL(10,2) GENERATED ALWAYS AS (quantity * unit_price) STORED,
+    quantity DECIMAL(10, 2) NOT NULL,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    total_price DECIMAL(10, 2) GENERATED ALWAYS AS (quantity * unit_price) STORED,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    total_quantity DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    total_quantity DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     PRIMARY KEY (id),
     KEY (sale_id),
     KEY (product_id)
