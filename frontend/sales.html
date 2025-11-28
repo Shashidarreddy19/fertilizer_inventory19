@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales & Billing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="./css/new-navigation.css">
+    <link rel="stylesheet" href="./css/sales.css">
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <a href="index.html" class="brand">
+                <span class="brand-text">Fertilizer<span>Manager</span></span>
+            </a>
+            <div class="nav-links">
+                <a href="afterlogindashboard.html" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="total-stock.html" class="nav-link">
+                    <i class="fas fa-boxes"></i> TotalStock
+                </a>
+                <a href="low-stock-alerts.html" class="nav-link">
+                    <i class="fas fa-exclamation-triangle"></i> LowStock
+                </a>
+                <a href="expiring-soon.html" class="nav-link">
+                    <i class="fas fa-clock"></i> ExpiringSoon
+                </a>
+                <a href="suppliers.html" class="nav-link">
+                    <i class="fas fa-truck"></i> Suppliers
+                </a>
+                <a href="order-history.html" class="nav-link">
+                    <i class="fas fa-history"></i> OrderHistory
+                </a>
+                <a href="customers.html" class="nav-link">
+                    <i class="fas fa-users"></i> Customers
+                </a>
+                <a href="sales.html" class="nav-link active">
+                    <i class="fas fa-shopping-cart"></i> Sales
+                </a>
+                <a href="credit.html" class="nav-link">
+                    <i class="fas fa-credit-card"></i> Credit
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div id="app">
+        <div class="container">
+            <!-- Daily Sales Statistics -->
+            <div class="stats-card">
+                <h2><i class="fas fa-shopping-cart"></i> Daily Sales Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-box blue">
+                        <h3>Total Sales</h3>
+                        <p id="totalSales">0.00</p>
+                    </div>
+                    <div class="stat-box green">
+                        <h3>Total Items</h3>
+                        <p id="totalItems">0.00</p>
+                    </div>
+                    <div class="stat-box purple">
+                        <h3>Final Amount</h3>
+                        <p id="finalAmount">₹0.00</p>
+                    </div>
+                    <div class="stat-box yellow">
+                        <h3>Top Products Sold</h3>
+                        <div id="productsSold" class="products-list">
+                            <!-- Products will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Sale Form -->
+            <div class="sale-card">
+                <h2><i class="fas fa-box"></i> New Sale</h2>
+                <form id="salesForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Customer Name</label>
+                            <select id="customerName" class="customer-select">
+                                <option value="">Select customer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="saleDate" class="date-input">
+                        </div>
+                    </div>
+
+                    <div class="products-section">
+                        <h3>Products</h3>
+                        <div class="product-entry">
+                            <select class="product-select">
+                                <option value="">Select Product</option>
+                            </select>
+                            <div class="quantity-wrapper">
+                                <input type="number" class="items-input" placeholder="Enter items" min="1">
+                                <span class="max-items">Max: 0</span>
+                                <div class="calculated-quantity">
+                                    <span class="quantity-label">Total Quantity:</span>
+                                    <span class="quantity-value">0</span>
+                                    <span class="quantity-unit"></span>
+                                </div>
+                            </div>
+                            <input type="number" class="price-input" placeholder="0" readonly>
+                            <button type="button" class="btn-delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-add">
+                        <i class="fas fa-plus"></i> Add Product
+                    </button>
+
+                    <div class="price-summary">
+                        <div class="price-field">
+                            <label><i class="fas fa-money-bill"></i> Total Price:</label>
+                            <div class="price-input-group">
+                                <span class="currency">₹</span>
+                                <input type="text" id="totalPrice" value="0.00" readonly>
+                            </div>
+                        </div>
+                        <div class="price-field">
+                            <label><i class="fas fa-percent"></i> Discount (%):</label>
+                            <input type="number" id="discount" value="0" min="0" max="100">
+                        </div>
+                        <div class="price-field">
+                            <label><i class="fas fa-file-invoice"></i> Final Price:</label>
+                            <div class="price-input-group">
+                                <span class="currency">₹</span>
+                                <input type="text" id="finalPrice" value="0.00" readonly>
+                            </div>
+                        </div>
+                        <div class="price-field">
+                            <label><i class="fas fa-credit-card"></i> Payment Type:</label>
+                            <select id="paymentType" class="payment-select">
+                                <option value="cash">Cash</option>
+                                <option value="card">Card</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-calculate">
+                            <i class="fas fa-calculator"></i> Calculate Total
+                        </button>
+                        <button type="submit" class="btn-complete">
+                            <i class="fas fa-check"></i> Complete Sale
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Sales History -->
+            <div class="sales-history">
+                <h2>Sales History</h2>
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label for="startDate">From:</label>
+                        <input type="date" id="startDate" onchange="loadSalesHistory()">
+                    </div>
+                    <div class="filter-group">
+                        <label for="endDate">To:</label>
+                        <input type="date" id="endDate" onchange="loadSalesHistory()">
+                    </div>
+                    <div class="filter-group">
+                        <label for="showArchived">Show Archived Sales:</label>
+                        <input type="checkbox" id="showArchived" onchange="loadSalesHistory()">
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="sales-table">
+                        <thead>
+                            <tr>
+                                <th>Customer ID</th>
+                                <th>Customer Name</th>
+                                <th>Date</th>
+                                <th>Products</th>
+                                <th>Quantities</th>
+                                <th>Discount</th>
+                                <th>Final Amount</th>
+                                <th>Payment Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesList">
+                            <!-- Sales data will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/sales.js"></script>
+    <script src="./js/config.js"></script>
+</body>
+</html>

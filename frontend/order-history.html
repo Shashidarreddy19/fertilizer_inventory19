@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <link rel="stylesheet" href="./css/new-navigation.css">
+    <link rel="stylesheet" href="./css/order-history.css">
+</head>
+
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <a href="index.html" class="brand">
+                <span class="brand-text">Fertilizer<span>Manager</span></span>
+            </a>
+            <div class="nav-links">
+                <a href="afterlogindashboard.html" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="total-stock.html" class="nav-link">
+                    <i class="fas fa-boxes"></i> TotalStock
+                </a>
+                <a href="low-stock-alerts.html" class="nav-link">
+                    <i class="fas fa-exclamation-triangle"></i> LowStock
+                </a>
+                <a href="expiring-soon.html" class="nav-link">
+                    <i class="fas fa-clock"></i> ExpiringSoon
+                </a>
+                <a href="suppliers.html" class="nav-link">
+                    <i class="fas fa-truck"></i> Suppliers
+                </a>
+                <a href="order-history.html" class="nav-link active">
+                    <i class="fas fa-history"></i> OrderHistory
+                </a>
+                <a href="customers.html" class="nav-link">
+                    <i class="fas fa-users"></i> Customers
+                </a>
+                <a href="sales.html" class="nav-link">
+                    <i class="fas fa-shopping-cart"></i> Sales
+                </a>
+                <a href="credit.html" class="nav-link">
+                    <i class="fas fa-credit-card"></i> Credit
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-history" id="heading1"></i> Order History</h1>
+        </div>
+
+        <!-- Add/Edit Order Form -->
+        <div class="form-container">
+            <h2 id="form-title">Add New Order</h2>
+            <form id="order-form">
+                <input type="hidden" id="order-id">
+                <div class="form-group">
+                    <label for="supplier">Supplier</label>
+                    <select id="supplier" required>
+                        <!-- Options will be dynamically populated -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product-name">Product Name</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity-unit">Quantity Unit</label>
+                    <select id="quantity-unit" required>
+                        <option value="kg">kg</option>
+                        <option value="liters">liters</option>
+                        <option value="grams">grams</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="number-of-items">Number of Items</label>
+                    <input type="number" id="number-of-items" required>
+                </div>
+                <div class="form-group">
+                    <label for="order-date">Order Date</label>
+                    <input type="date" id="order-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" required>
+                        <option value="Pending">Pending</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <button type="submit" id="submit-button" class="btn">
+                    <i class="fas fa-plus"></i> Add Order
+                </button>
+                <button type="button" id="cancel-button" class="btn btn-cancel" style="display: none;">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </form>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <input type="text" id="search-supplier" placeholder="Search by supplier">
+            <select id="filter-status">
+                <option value="">All Statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="Shipped">Shipped</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+            <button id="apply-filters" class="btn">Apply Filters</button>
+            <button id="reset-filters" class="btn btn-secondary">Reset Filters</button>
+        </div>
+        
+        <div class="table-container">
+            <div class="scrollable-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Supplier</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Quantity Unit</th>
+                            <th>Number of Items</th>
+                            <th>Order Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body">
+                        <!-- Orders will be dynamically populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="./js/order-history.js"></script>
+    <script src="./js/config.js"></script>
+</body>
+
+</html>

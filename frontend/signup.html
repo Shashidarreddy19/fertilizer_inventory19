@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a new account</title>
+    <link rel="stylesheet" href="./css/signup.css">
+    <script>
+        function checkLoginRedirect() {
+            const userId = localStorage.getItem('userId');
+            if (userId) {
+                window.location.href = 'afterlogindashboard.html';
+                return false;
+            }
+            return true;
+        }
+
+        function validatePassword() {
+            let passwordField = document.getElementById("password");
+            let confirmPasswordField = document.getElementById("confirm-password");
+
+            let password = passwordField.value.trim();
+            let confirmPassword = confirmPasswordField.value.trim();
+
+            let passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+            if (!passwordPattern.test(password)) {
+                showError("Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.");
+                passwordField.focus();
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                showError("Passwords do not match.");
+                confirmPasswordField.focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        function validateEmail() {
+            let email = document.getElementById("email").value.trim();
+            let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+            if (!emailPattern.test(email)) {
+                showError("Invalid email address.");
+                return false;
+            }
+
+            return true;
+        }
+
+        function validatePhone() {
+            let phone = document.getElementById("phone").value.trim();
+            let phonePattern = /^[6789]\d{9}$/;  // Indian mobile number format
+
+            if (!phonePattern.test(phone)) {
+                showError("Invalid phone number. Please enter a valid 10-digit mobile number.");
+                return false;
+            }
+            return true;
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById("error-message");
+            errorDiv.textContent = message;
+            errorDiv.style.display = "block";
+            setTimeout(() => {
+                errorDiv.style.display = "none";
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById("success-message");
+            successDiv.textContent = message;
+            successDiv.style.display = "block";
+            setTimeout(() => {
+                successDiv.style.display = "none";
+            }, 3000);
+        }
+
+        async function validateAndSubmit() {
+            try {
+                // Clear previous messages
+                document.getElementById("error-message").style.display = "none";
+                document.getElementById("success-message").style.display = "none";
+
+                if (!validatePassword() || !validateEmail() || !validatePhone()) {
+                    return;
+                }
+
+                const shopName = document.getElementById('shop-name').value.trim();
+                const ownerName = document.getElementById('owner-name').value.trim();
+
+                if (!shopName || !ownerName) {
+                    showError("Shop name and owner name are required.");
+                    return;
+                }
+
+                const user = {
+                    shopName: shopName,
+                    ownerName: ownerName,
+                    email: document.getElementById('email').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    password: document.getElementById('password').value
+                };
+
+                const response = await fetch(`${API_BASE_URL}/users/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                });
+
+                let data;
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    data = await response.json();
+                } else {
+                    const textData = await response.text();
+                    try {
+                        data = JSON.parse(textData);
+                    } catch (e) {
+                        console.error('Response parsing error:', textData);
+                        throw new Error('Invalid server response');
+                    }
+                }
+
+                if (!response.ok) {
+                    throw new Error(data.error || data.message || 'Failed to register user');
+                }
+
+                showSuccess('Registration successful! Redirecting to login page...');
+                setTimeout(() => {
+                    window.location.href = 'loginpage.html';
+                }, 2000);
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Error registering user. Please try again.');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="background-image"></div>
+        <div class="form-container">
+            <h1>Create a new account</h1>
+            <p>Already have an account? <a href="loginpage.html" onclick="return checkLoginRedirect()">Login</a></p>
+            
+            <div id="error-message" class="message error" style="display: none;"></div>
+            <div id="success-message" class="message success" style="display: none;"></div>
+
+            <form onsubmit="event.preventDefault(); validateAndSubmit();">
+                <label for="shop-name">Shop Name</label>
+                <input type="text" id="shop-name" placeholder="Enter shop name" required>
+
+                <label for="owner-name">Owner's Full Name</label>
+                <input type="text" id="owner-name" placeholder="Enter owner's full name" required>
+
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email address" required>
+
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" placeholder="Enter 10-digit mobile number" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter password" required>
+
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" placeholder="Confirm password" required>
+
+                <button type="submit">Sign Up</button>
+            </form>
+            <p class="terms">By registering, you accept <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+        </div>
+    </div>
+    <script src="./js/config.js"></script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer Management - FertilizerManager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="./css/new-navigation.css">
+    <link rel="stylesheet" href="./css/customers.css">
+    <!-- Add SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <a href="index.html" class="brand">
+                <span class="brand-text">Fertilizer<span>Manager</span></span>
+            </a>
+            <div class="nav-links">
+                <a href="afterlogindashboard.html" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="total-stock.html" class="nav-link">
+                    <i class="fas fa-boxes"></i> TotalStock
+                </a>
+                <a href="low-stock-alerts.html" class="nav-link">
+                    <i class="fas fa-exclamation-triangle"></i> LowStock
+                </a>
+                <a href="expiring-soon.html" class="nav-link">
+                    <i class="fas fa-clock"></i> ExpiringSoon
+                </a>
+                <a href="suppliers.html" class="nav-link">
+                    <i class="fas fa-truck"></i> Suppliers
+                </a>
+                <a href="order-history.html" class="nav-link">
+                    <i class="fas fa-history"></i> OrderHistory
+                </a>
+                <a href="customers.html" class="nav-link active">
+                    <i class="fas fa-users"></i> Customers
+                </a>
+                <a href="sales.html" class="nav-link">
+                    <i class="fas fa-shopping-cart"></i> Sales
+                </a>
+                <a href="credit.html" class="nav-link">
+                    <i class="fas fa-credit-card"></i> Credit
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div id="app">
+        <!-- Add Alert Div -->
+        <div id="alertDiv" class="alert-container"></div>
+        
+        <div class="container">
+            <!-- Customer Form Section -->
+            <div class="form-container">
+                <h2 style="color: black;">Add New Customer</h2>
+                <form id="customerForm">
+                    <div class="form-group">
+                        <label for="customerName">Customer Name: <span style="color: red;">*</span></label>
+                        <input type="text" id="customerName" name="customerName" required placeholder="Enter customer name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number: <span style="color: red;">*</span></label>
+                        <input type="tel" id="phone" name="phone" required placeholder="10-digit phone number" pattern="[0-9]{10}">
+                        <small>Format: 10 digits number</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes">Notes:</label>
+                        <textarea id="notes" name="notes" rows="2" placeholder="Enter any notes about the customer"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address">Address:</label>
+                        <textarea id="address" name="address" rows="3" placeholder="Enter customer address"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Customer
+                        </button>
+                        <button type="reset" class="btn-secondary">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Customers List Section -->
+            <div class="customers-section">
+                <div class="section-header">
+                    <h2 style="color: black;"><i class="fas fa-users"></i> Customer List</h2>
+                    <div class="search-box">
+                        <input type="text" id="searchCustomer" placeholder="Search customers...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <div id="customersList" class="customers-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Customer Modal -->
+    <div class="modal" id="editCustomerModal" tabindex="-1" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Customer</h3>
+                <button type="button" class="close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editCustomerForm">
+                    <div class="form-group">
+                        <label for="editCustomerName">Customer Name: <span style="color: red;">*</span></label>
+                        <input type="text" id="editCustomerName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editCustomerPhone">Phone Number: <span style="color: red;">*</span></label>
+                        <input type="tel" id="editCustomerPhone" required pattern="[0-9]{10}">
+                        <small>Format: 10 digits number</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editCustomerNotes">Notes:</label>
+                        <textarea id="editCustomerNotes" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editCustomerAddress">Address:</label>
+                        <textarea id="editCustomerAddress" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="closeEditModal()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/customers.js"></script>
+</body>
+</html>

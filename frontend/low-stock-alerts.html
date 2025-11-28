@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Low Stock Alerts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="./css/new-navigation.css">
+    <link rel="stylesheet" href="./css/low-stock-alerts.css">
+</head>
+
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <a href="index.html" class="brand">
+                <span class="brand-text">Fertilizer<span>Manager</span></span>
+            </a>
+            <div class="nav-links">
+                <a href="afterlogindashboard.html" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="total-stock.html" class="nav-link">
+                    <i class="fas fa-boxes"></i> TotalStock
+                </a>
+                <a href="low-stock-alerts.html" class="nav-link active">
+                    <i class="fas fa-exclamation-triangle"></i> LowStock
+                </a>
+                <a href="expiring-soon.html" class="nav-link">
+                    <i class="fas fa-clock"></i> ExpiringSoon
+                </a>
+                <a href="suppliers.html" class="nav-link">
+                    <i class="fas fa-truck"></i> Suppliers
+                </a>
+                <a href="order-history.html" class="nav-link">
+                    <i class="fas fa-history"></i> OrderHistory
+                </a>
+                <a href="customers.html" class="nav-link">
+                    <i class="fas fa-users"></i> Customers
+                </a>
+                <a href="sales.html" class="nav-link">
+                    <i class="fas fa-shopping-cart"></i> Sales
+                </a>
+                <a href="credit.html" class="nav-link">
+                    <i class="fas fa-credit-card"></i> Credit
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <div class="title-section">
+                <h1>Low Stock Alerts</h1>
+            </div>
+            <div class="header-actions">
+                <button class="back-button" onclick="window.location.href='afterlogindashboard.html'">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Dashboard
+                </button>
+                <button class="refresh-button" id="refreshButton">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh Alerts
+                </button>
+            </div>
+        </div>
+
+        <div id="alerts-container">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading alerts...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/config.js"></script>
+    <script src="./js/low-stock-alerts.js"></script>
+
+</body>
+
+</html>

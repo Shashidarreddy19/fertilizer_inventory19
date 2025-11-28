@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="./css/afterlogindashboard.css">
+
+</head>
+
+<body>
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-circle"></i> Profile Details</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="profile-detail">
+                    <i class="fas fa-store"></i>
+                    <div class="detail-info">
+                        <label>Shop Name</label>
+                        <p id="modalShopName"></p>
+                    </div>
+                </div>
+                <div class="profile-detail">
+                    <i class="fas fa-user"></i>
+                    <div class="detail-info">
+                        <label>Owner Name</label>
+                        <p id="modalOwnerName"></p>
+                    </div>
+                </div>
+                <div class="profile-detail">
+                    <i class="fas fa-envelope"></i>
+                    <div class="detail-info">
+                        <label>Email</label>
+                        <p id="modalEmail"></p>
+                    </div>
+                </div>
+                <div class="profile-detail">
+                    <i class="fas fa-phone"></i>
+                    <div class="detail-info">
+                        <label>Phone</label>
+                        <p id="modalPhone"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <nav>
+            <div class="logo">Fertilizer<span>Manager</span></div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html">Home</a></li>
+                <li><a href="afterlogindashboard.html">Features</a></li>
+                <li><a href="dashboard.html#about">About</a></li>
+                <li><a href="dashboard.html#contact">Contact</a></li>
+            </ul>
+            <div class="auth-buttons" id="authButtons">
+                <a href="loginpage.html" class="login-btn">Login</a>
+                <a href="signup.html" class="signup-btn">Sign Up</a>
+            </div>
+            <div class="profile-section" id="profileSection" style="display: none;">
+                <div class="profile-info">
+                    <div class="profile-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span class="shop-name" id="shopName"></span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </div>
+                <div class="profile-dropdown">
+                    <a href="#" id="viewProfile"><i class="fas fa-user-circle"></i> View Profile</a>
+                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section id="dashboard" class="container">
+        <div class="dashboard-header">
+            <h2 style="color: #005703;"><i class="fas fa-chart-line"></i> Dashboard</h2>
+        </div>
+        <div class="stats">
+            <a href="total-stock.html" class="card" data-stat="total-stock">
+                <i class="fas fa-boxes"></i>
+                <h3>Total Stock</h3>
+                <p class="stat-value">0 Items</p>
+            </a>
+            <a href="low-stock-alerts.html" class="card" data-stat="low-stock">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Low Stock Alerts</h3>
+                <p class="stat-value">0 Products</p>
+            </a>
+            <a href="expiring-soon.html" class="card" data-stat="expiring-soon">
+                <i class="fas fa-calendar-times"></i>
+                <h3>Expiring Soon</h3>
+                <p class="stat-value">0 Products</p>
+            </a>
+            <a href="suppliers.html" class="card" data-stat="suppliers">
+                <i class="fas fa-truck"></i>
+                <h3>Suppliers</h3>
+                <p class="stat-value">0 Suppliers</p>
+            </a>
+            <a href="order-history.html" class="card" data-stat="orders">
+                <i class="fas fa-history"></i>
+                <h3>Order History</h3>
+                <p class="stat-value">0 Orders Placed</p>
+            </a>
+            <a href="customers.html" class="card" data-stat="customers">
+                <i class="fas fa-users"></i>
+                <h3>Customers</h3>
+                <p class="stat-value">0 Customers</p>
+            </a>
+            <a href="sales.html" class="card" data-stat="sales">
+                <i class="fas fa-chart-bar"></i>
+                <h3>Sales Management</h3>
+
+            </a>
+            <a href="credit.html" class="card" data-stat="credit">
+                <i class="fas fa-credit-card"></i>
+                <h3>Consumer Credit</h3>
+            </a>
+        </div>
+
+    <script src="./js/afterlogindashboard.js"></script>
+    <script src="./js/config.js"></script>
+</body>
+
+</html>

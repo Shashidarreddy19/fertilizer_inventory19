@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="./css/new-navigation.css">
+    <link rel="stylesheet" href="./css/total-stock.css">
+    <script src="./js/config.js"></script>
+    <script>
+        // Authentication check function
+        function checkAuthentication() {
+            const userId = localStorage.getItem('userId');
+            const lastAuthTime = localStorage.getItem('lastAuthTime');
+            const sessionTimeout = 30 * 60 * 1000; // 30 minutes in milliseconds
+
+            if (!userId || !lastAuthTime) {
+                window.location.href = 'loginpage.html';
+                return;
+            }
+
+            // Check if session has expired
+            const currentTime = new Date().getTime();
+            if (currentTime - parseInt(lastAuthTime) > sessionTimeout) {
+                localStorage.removeItem('lastAuthTime');
+                alert('Your session has expired. Please login again.');
+                window.location.href = 'loginpage.html';
+                return;
+            }
+        }
+
+        // Check authentication on page load
+        checkAuthentication();
+
+        // Check authentication when page becomes visible
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                checkAuthentication();
+            }
+        });
+
+        // Prevent going back after logout
+        window.history.pushState(null, null, window.location.href);
+        window.addEventListener('popstate', function(event) {
+            window.history.pushState(null, null, window.location.href);
+            checkAuthentication();
+        });
+    </script>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <a href="index.html" class="brand">
+                <span class="brand-text">Fertilizer<span>Manager</span></span>
+            </a>
+            <div class="nav-links">
+                <a href="afterlogindashboard.html" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="total-stock.html" class="nav-link active">
+                    <i class="fas fa-boxes"></i> TotalStock
+                </a>
+                <a href="low-stock-alerts.html" class="nav-link">
+                    <i class="fas fa-exclamation-triangle"></i> LowStock
+                </a>
+                <a href="expiring-soon.html" class="nav-link">
+                    <i class="fas fa-clock"></i> ExpiringSoon
+                </a>
+                <a href="suppliers.html" class="nav-link">
+                    <i class="fas fa-truck"></i> Suppliers
+                </a>
+                <a href="order-history.html" class="nav-link">
+                    <i class="fas fa-history"></i> OrderHistory
+                </a>
+                <a href="customers.html" class="nav-link">
+                    <i class="fas fa-users"></i> Customers
+                </a>
+                <a href="sales.html" class="nav-link">
+                    <i class="fas fa-shopping-cart"></i> Sales
+                </a>
+                <a href="credit.html" class="nav-link">
+                    <i class="fas fa-credit-card"></i> Credit
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="header">
+            <h1>Inventory Management</h1>
+        </div>
+        <div class="form-container">
+            <h2 id="form-title">Add New Product</h2>
+            <form id="stock-form" enctype="multipart/form-data">
+                <input type="hidden" id="stock-id">
+                <div class="form-group">
+                    <label for="product-image">Product Image</label>
+                    <input type="file" id="product-image" name="productImage" accept="image/*" required>
+                    <div id="image-preview"></div>
+                </div>
+                <div class="form-group">
+                    <label for="product-name">Product Name</label>
+                    <input type="text" id="product-name" required placeholder="Enter product name">
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" required onchange="updateQuantityFields()">
+                        <option value="">Select Category</option>
+                        <option value="Pesticides">Pesticides</option>
+                        <option value="Fertilizers">Fertilizers</option>
+                        <option value="Seeds">Seeds</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="supplier">Supplier</label>
+                    <select id="supplier" required>
+                        <option value="">Select Supplier</option>
+                    </select>
+                </div>
+                <div id="package-size-container" class="form-group" style="display: none;">
+                    <label for="packageSize">Package Size</label>
+                    <div class="input-group">
+                        <input type="number" name="packageSize" id="packageSize" class="form-control" placeholder="Enter or select package size" step="10" min="10">
+                        <select id="package-size-select" onchange="document.getElementById('packageSize').value = this.value;">
+                            <option value="">Select fixed size</option>
+                            <option value="100">100 mL</option>
+                            <option value="250">250 mL</option>
+                            <option value="500">500 mL</option>
+                            <option value="1000">1 L</option>
+                            <option value="2000">2 L</option>
+                            <option value="5000">5 L</option>
+                        </select>
+                        <span class="input-group-text" id="pesticideUnitLabel">mL</span>
+                    </div>
+                </div>
+                <div id="fertilizer-package-size-container" class="form-group" style="display: none;">
+                    <label for="fertilizerPackageSize">Package Size</label>
+                    <div class="input-group">
+                        <input type="number" name="fertilizerPackageSize" id="fertilizerPackageSize" class="form-control" placeholder="Enter or select package size" step="0.1" min="0.1" max="1000">
+                        <select id="fertilizer-package-size-select" onchange="document.getElementById('fertilizerPackageSize').value = this.value;">
+                            <option value="">Select fixed size</option>
+                            <option value="2.5">2.5 kg</option>
+                            <option value="5">5 kg</option>
+                            <option value="7.5">7.5 kg</option>
+                            <option value="15">15 kg</option>
+                            <option value="25">25 kg</option>
+                            <option value="50">50 kg</option>
+                        </select>
+                        <span class="input-group-text">kg</span>
+                    </div>
+                </div>
+                <div id="fixed-quantity-container" class="form-group" style="display: none;">
+                    <label for="fixed-quantity">Fixed Package Size</label>
+                    <select id="fixed-quantity">
+                        <option value="2.5">2.5 kg</option>
+                        <option value="5">5 kg</option>
+                        <option value="7.5">7.5 kg</option>
+                        <option value="15">15 kg</option>
+                        <option value="25">25 kg</option>
+                        <option value="50">50 kg</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="number-of-items">Number of Items</label>
+                    <input type="number" id="number-of-items" required placeholder="Enter number of items">
+                </div>
+                <div class="form-group">
+                    <label for="expiry-date">Expiry Date</label>
+                    <input type="date" id="expiry-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="actual-price">Purchase Price</label>
+                    <input type="number" id="actual-price" required placeholder="Enter purchase price">
+                </div>
+                <div class="form-group">
+                    <label for="selling-price">Selling Price</label>
+                    <input type="number" id="selling-price" required placeholder="Enter selling price">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" id="submit-button" class="btn">
+                        Add Product
+                    </button>
+                    <button type="button" id="cancel-button" class="btn-cancel" onclick="resetForm()" style="display: none;">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="table-container">
+            <h2>Inventory List</h2>
+            <table id="stock-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Image</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Supplier</th>
+                        <th>Package Size</th>
+                        <th>Number of Items</th>
+                        <th>Total Quantity</th>
+                        <th>Expiry Date</th>
+                        <th>Purchase Price</th>
+                        <th>Selling Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Product</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this product?</p>
+                <p>This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn-confirm-delete" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this right before the closing body tag -->
+    <div id="errorModal" class="error-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-exclamation-circle"></i> Error</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-ok">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isEditing = false;
+        let currentStockId = null;
+    
+        document.addEventListener("DOMContentLoaded", () => {
+            const productImageInput = document.getElementById('product-image');
+            if (productImageInput) {
+                productImageInput.addEventListener('change', previewImage);
+            }
+    
+            fetchStock();
+            fetchSuppliers();
+            updateQuantityFields();
+    
+            const stockForm = document.getElementById('stock-form');
+            if (stockForm) {
+                stockForm.addEventListener('submit', handleStock);
+            }
+    
+            document.getElementById('category').addEventListener('change', updateQuantityFields);
+
+            // Add realtime product name validation
+            const productNameInput = document.getElementById('product-name');
+            if (productNameInput) {
+                productNameInput.addEventListener('blur', validateProductName);
+            }
+
+            // Add listener for pesticide unit change
+            const packageSizeSelect = document.getElementById('package-size-select');
+            const pesticideUnitLabel = document.getElementById('pesticideUnitLabel');
+            const packageSizeInput = document.getElementById('packageSize');
+
+            if (packageSizeSelect && pesticideUnitLabel && packageSizeInput) {
+                packageSizeSelect.addEventListener('change', () => {
+                    const selectedValue = packageSizeSelect.value;
+                    packageSizeInput.value = selectedValue; // Update the input field as well
+                    if (selectedValue >= 1000) {
+                        pesticideUnitLabel.textContent = 'L';
+                    } else {
+                        pesticideUnitLabel.textContent = 'mL';
+                    }
+                });
+            }
+        });
+    
+        // Preview uploaded image
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('image-preview');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Product preview">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    
+        // Update quantity fields dynamically based on category
+        function updateQuantityFields() {
+            const category = document.getElementById('category').value;
+            const fixedQuantityContainer = document.getElementById('fixed-quantity-container');
+            const packageSizeContainer = document.getElementById('package-size-container');
+            const fertilizerPackageSizeContainer = document.getElementById('fertilizer-package-size-container');
+            const packageSizeInput = document.getElementById('packageSize');
+            const fertilizerPackageSizeInput = document.getElementById('fertilizerPackageSize');
+            const pesticideUnitLabel = document.getElementById('pesticideUnitLabel'); // Get label reference
+
+            packageSizeContainer.style.display = 'none';
+            fixedQuantityContainer.style.display = 'none';
+            fertilizerPackageSizeContainer.style.display = 'none';
+
+            if (category === 'Pesticides') {
+                packageSizeContainer.style.display = 'block';
+                packageSizeInput.value = '';
+                if (pesticideUnitLabel) pesticideUnitLabel.textContent = 'mL'; // Reset label
+            } else if (category === 'Fertilizers' || category === 'Seeds') {
+                fertilizerPackageSizeContainer.style.display = 'block';
+                fertilizerPackageSizeInput.value = '';
+            }
+        }
+    
+        // Handle stock submission
+        async function handleStock(event) {
+            event.preventDefault();
+    
+            try {
+                const userId = localStorage.getItem('userId');
+                if (!userId) {
+                    showErrorModal('User not logged in. Please log in again.');
+                    window.location.href = 'loginpage.html';
+                    return;
+                }
+    
+                // Get product name and validate
+                const productName = document.getElementById('product-name').value.trim();
+                if (!productName) {
+                    showErrorModal('Product name is required');
+                    document.getElementById('product-name').focus();
+                    return;
+                }
+
+                // If we're adding a new product (not editing), check for duplicates
+                if (!isEditing) {
+                    // Fetch all products to check for duplicates
+                    const response = await fetch(`${API_BASE_URL}/stock?userId=${userId}`);
+                    const products = await response.json();
+                    
+                    // Check if product name already exists (case insensitive comparison)
+                    const duplicate = products.find(
+                        p => p.product_name.toLowerCase() === productName.toLowerCase()
+                    );
+                    
+                    if (duplicate) {
+                        showErrorModal(`A product with the name "${productName}" already exists. Please use a different name.`);
+                        document.getElementById('product-name').focus();
+                        return;
+                    }
+                }
+    
+                const formData = new FormData();
+                formData.append('userId', userId);
+    
+                // Add all form fields to FormData with proper names
+                const fields = [
+                    { id: 'supplier', name: 'supplier' },
+                    { id: 'product-name', name: 'productname' },
+                    { id: 'category', name: 'category' },
+                    { id: 'number-of-items', name: 'numberofitems' },
+                    { id: 'expiry-date', name: 'expirydate' },
+                    { id: 'actual-price', name: 'actualprice' },
+                    { id: 'selling-price', name: 'sellingprice' }
+                ];
+    
+                for (const field of fields) {
+                    const value = document.getElementById(field.id).value.trim();
+                    if (!value) {
+                        showErrorModal(`Please fill in ${field.id.replace(/-/g, ' ')}`);
+                        return;
+                    }
+                    formData.append(field.name, value);
+                }
+    
+                // Handle package sizes based on category
+                const category = document.getElementById('category').value;
+                if (category === 'Pesticides') {
+                    const packageSize = document.getElementById('packageSize').value;
+                    if (!packageSize) {
+                        showErrorModal('Please enter package size for pesticide');
+                        return;
+                    }
+                    // Ensure the value is a valid number and within reasonable range
+                    const packageSizeNum = parseFloat(packageSize);
+                    if (isNaN(packageSizeNum) || packageSizeNum <= 0 || packageSizeNum > 10000) {
+                        showErrorModal('Please enter a valid package size between 0.1 and 10000');
+                        return;
+                    }
+                    formData.append('packageSize', packageSizeNum.toString());
+                } else if (category === 'Fertilizers' || category === 'Seeds') {
+                    const packageSize = document.getElementById('fertilizerPackageSize').value;
+                    if (!packageSize) {
+                        showErrorModal('Please enter package size for ' + category.toLowerCase());
+                        return;
+                    }
+                    // Ensure the value is a valid number and within reasonable range
+                    const packageSizeNum = parseFloat(packageSize);
+                    if (isNaN(packageSizeNum) || packageSizeNum <= 0 || packageSizeNum > 1000) {
+                        showErrorModal('Please enter a valid package size between 0.1 and 1000');
+                        return;
+                    }
+                    formData.append('packageSize', packageSizeNum.toString());
+                }
+
+                // Handle image upload
+                const imageFile = document.getElementById('product-image').files[0];
+                if (imageFile) {
+                    if (imageFile.size > 5 * 1024 * 1024) {
+                        showErrorModal('Image size should be less than 5MB');
+                        return;
+                    }
+                    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                    if (!allowedTypes.includes(imageFile.type)) {
+                        showErrorModal('Only JPG, PNG, and GIF images are allowed');
+                        return;
+                    }
+                    formData.append('productImage', imageFile);
+                }
+    
+                const endpoint = isEditing ?
+                    `${API_BASE_URL}/stock/${currentStockId}` :
+                    `${API_BASE_URL}/stock`;
+    
+                const response = await fetch(endpoint, {
+                    method: isEditing ? 'PUT' : 'POST',
+                    body: formData
+                });
+    
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    if (response.status === 409) {
+                        showErrorModal(`A product with the name "${formData.get('productname')}" already exists. Please use a different name.`);
+                        document.getElementById('product-name').focus();
+                        return;
+                    }
+                    throw new Error(data.error || 'Failed to save product');
+                }
+    
+                showMessage(
+                    isEditing ? 'Product updated successfully' : 'Product added successfully',
+                    'success'
+                );
+    
+                resetForm();
+                await fetchStock();
+            } catch (error) {
+                showErrorModal(error.message || 'An error occurred while saving the product');
+            }
+        }
+    
+        // Fetch stock data
+        async function fetchStock() {
+            const userId = localStorage.getItem('userId');
+            
+            if (!userId) {
+                alert('Please log in first');
+                window.location.href = 'loginpage.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/stock?userId=${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to fetch stock data');
+                }
+
+                const data = await response.json();
+                if (!Array.isArray(data)) {
+                    throw new Error('Invalid data format received from server');
+                }
+                
+                // Save products for validation
+                allProducts = data;
+                
+                renderTable(data);
+            } catch (error) {
+                console.error('Error fetching stock:', error);
+                alert('Failed to load stock data. Please try again.');
+            }
+        }
+    
+        // Fetch supplier list
+        async function fetchSuppliers() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/suppliers?userId=${localStorage.getItem('userId')}`);
+                if (!response.ok) throw new Error('Failed to fetch suppliers');
+    
+                const data = await response.json();
+                if (!Array.isArray(data) || data.length === 0) {
+                    if (confirm('No suppliers found. Would you like to add a supplier now?')) {
+                        window.location.href = 'suppliers.html';
+                    }
+                    return;
+                }
+                populateSupplierDropdown(data);
+            } catch (error) {
+                console.error('Error fetching suppliers:', error);
+                alert('Could not load suppliers. Please try again.');
+            }
+        }
+    
+        // Populate supplier dropdown
+        function populateSupplierDropdown(suppliers) {
+            const supplierDropdown = document.getElementById('supplier');
+            supplierDropdown.innerHTML = '<option value="">Select Supplier</option>';
+    
+            suppliers.forEach(supplier => {
+                const option = document.createElement('option');
+                option.value = supplier.id;
+                option.textContent = supplier.supplier_name;
+                supplierDropdown.appendChild(option);
+            });
+        }
+    
+        // Reset form fields
+        function resetForm() {
+            isEditing = false;
+            currentStockId = null;
+            document.getElementById('stock-form').reset();
+            document.getElementById('submit-button').textContent = 'Add Product';
+            document.getElementById('cancel-button').style.display = 'none';
+            document.getElementById('image-preview').innerHTML = '';
+            
+            // Clear any error styling
+            const inputs = document.querySelectorAll('.form-group input, .form-group select');
+            inputs.forEach(input => {
+                input.classList.remove('input-error');
+            });
+        }
+    
+        let productToDelete = null;
+
+        // Show delete confirmation modal
+        function showDeleteModal(stockId) {
+            productToDelete = stockId;
+            const modal = document.getElementById('deleteModal');
+            modal.style.display = 'block';
+        }
+
+        // Close delete confirmation modal
+        function closeDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            modal.style.display = 'none';
+            productToDelete = null;
+        }
+
+        // Confirm delete action
+        async function confirmDelete() {
+            if (!productToDelete) return;
+            
+            try {
+                const userId = localStorage.getItem('userId');
+                if (!userId) {
+                    showErrorModal('Please log in to delete products');
+                    window.location.href = 'loginpage.html';
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/stock/${productToDelete}?userId=${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'userId': userId
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || errorData.error || 'Failed to delete product');
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage(data.message || 'Product deleted successfully', 'success');
+                    await fetchStock(); // Refresh the table
+                } else {
+                    showErrorModal(data.message || 'Failed to delete product');
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                showErrorModal(error.message || 'Failed to delete product. Please try again.');
+            } finally {
+                closeDeleteModal();
+            }
+        }
+    
+        // Edit stock function
+        async function editStock(stock) {
+            try {
+                isEditing = true;
+                currentStockId = stock.id;
+                
+                // Populate form fields
+                const fields = {
+                    'product-name': stock.product_name,
+                    'category': stock.category,
+                    'supplier': stock.supplier_id,
+                    'quantity': stock.quantity,
+                    'quantity-unit': stock.quantity_unit,
+                    'number-of-items': stock.number_of_items,
+                    'actual-price': stock.actual_price,
+                    'selling-price': stock.selling_price
+                };
+
+                Object.entries(fields).forEach(([id, value]) => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.value = value || '';
+                    }
+                });
+
+                // Handle expiry date
+                if (stock.expiry_date) {
+                    document.getElementById('expiry-date').value = stock.expiry_date.split('T')[0];
+                }
+                
+                // Handle fixed quantity
+                if (stock.fixed_quantity) {
+                    const fixedQuantityContainer = document.getElementById('fixed-quantity-container');
+                    const fixedQuantitySelect = document.getElementById('fixed-quantity');
+                    if (fixedQuantityContainer && fixedQuantitySelect) {
+                        fixedQuantityContainer.style.display = 'block';
+                        fixedQuantitySelect.value = stock.fixed_quantity;
+                    }
+                }
+
+                // Update form appearance
+                document.getElementById('form-title').textContent = 'Edit Product';
+                document.getElementById('submit-button').innerHTML = '<i class="fas fa-save"></i> Update Product';
+                document.getElementById('cancel-button').style.display = 'inline-block';
+
+                // Show current image
+                const preview = document.getElementById('image-preview');
+                if (stock.image_url) {
+                    const imageUrl = stock.image_url.startsWith('/') 
+                        ? `${window.location.origin}${stock.image_url}`
+                        : `${window.location.origin}/${stock.image_url}`;
+                    preview.innerHTML = `
+                        <img 
+                            src="${imageUrl}" 
+                            alt="Current product image"
+                            style="max-width: 100px; height: auto; border-radius: 5px;"
+                            onerror="this.onerror=null; this.src='${window.location.origin}/images/default-product.png';"
+                        >`;
+                } else {
+                    preview.innerHTML = '';
+                }
+
+                // Make image not required during edit
+                document.getElementById('product-image').removeAttribute('required');
+
+                // Update category fields
+                const categorySelect = document.getElementById('category');
+                categorySelect.dispatchEvent(new Event('change'));
+
+                // Scroll to form
+                document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                console.error('Error setting up edit form:', error);
+                showMessage('Failed to load product details for editing', 'error');
+            }
+        }
+    
+        // Render table function
+        function renderTable(data) {
+            const tbody = document.querySelector('#stock-table tbody')
+            tbody.innerHTML = '';
+
+            if (!Array.isArray(data) || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="12" style="text-align: center;">No stock items found</td></tr>';
+                return;
+            }
+            const baseURL = window.location.origin;
+            data.forEach((stock, index) => {
+                let imageUrl;
+                if (stock.image_url) {
+                    // Ensure image_url starts with / for proper path construction
+                    imageUrl = stock.image_url.startsWith('/') 
+                        ? `${baseURL}${stock.image_url}`
+                        : `${baseURL}/${stock.image_url}`;
+                } else {
+                    imageUrl = `${baseURL}/images/default-product.png`;
+                }
+
+                const totalQuantity = stock.number_of_items * (stock.package_size || stock.fixed_quantity || 0);
+                const stockValue = totalQuantity * stock.actual_price;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>
+                        <img 
+                            src="${imageUrl}" 
+                            alt="${stock.product_name || 'Product image'}" 
+                            onerror="console.error('Image failed to load:', '${imageUrl}'); this.onerror=null; this.src='${baseURL}/images/default-product.png';"
+                            class="product-image"
+                            loading="lazy"
+                        />
+                    </td>
+                    <td>${stock.product_name || ''}</td>
+                    <td>${stock.category || ''}</td>
+                    <td>${stock.supplier_name || 'Unknown'}</td>
+                    <td>${stock.package_size ? stock.package_size + ' ' + stock.quantity_unit : 'N/A'}</td>
+                    <td>${stock.number_of_items || 0}</td>
+                    <td>${totalQuantity ? totalQuantity.toFixed(2) + ' ' + stock.quantity_unit : '0 ' + stock.quantity_unit}</td>
+                    <td>${stock.expiry_date ? stock.expiry_date.split('T')[0] : ''}</td>
+                    <td>₹${stock.actual_price || 0}</td>
+                    <td>₹${stock.selling_price || 0}</td>
+                    <td class="action-buttons">
+                        <button class="btn-edit" onclick="editStockItem(${stock.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn-delete" onclick="showDeleteModal(${stock.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Add new function to handle stock editing
+        async function editStockItem(stockId) {
+            try {
+                const userId = localStorage.getItem('userId');
+                if (!userId) {
+                    showErrorModal('Please log in to edit products');
+                    window.location.href = 'loginpage.html';
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/stock/${stockId}?userId=${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'userId': userId
+                    }
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showErrorModal('Product not found. It may have been deleted.');
+                        await fetchStock(); // Refresh the table
+                        return;
+                    }
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to fetch product details');
+                }
+
+                const stock = await response.json();
+                if (!stock || !stock.id) {
+                    showErrorModal('Invalid product data received');
+                    return;
+                }
+                editStock(stock);
+            } catch (error) {
+                console.error('Error in editStockItem:', error);
+                showErrorModal(error.message || 'Failed to edit product. Please try again.');
+            }
+        }
+
+        // Add image error handling function
+        function handleImageError(img) {
+            console.log('Image failed to load:', img.src);
+            img.onerror = null; // Prevent infinite loop
+            img.src = 'images/default-product.png';
+        }
+
+        // Add CSS for product images
+        const imageStyle = document.createElement('style');
+        imageStyle.textContent = `
+            .product-image {
+                width: 50px;
+                height: 50px;
+                object-fit: contain;
+                border-radius: 5px;
+                border: 1px solid #ddd;
+                background-color: #fff;
+                padding: 2px;
+            }
+        `;
+        document.head.appendChild(imageStyle);
+
+        // Add this CSS to your existing styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .action-buttons {
+                display: flex;
+                gap: 5px;
+                justify-content: center;
+            }
+            .btn-edit, .btn-delete {
+                padding: 5px 10px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                font-size: 14px;
+                transition: all 0.3s ease;
+            }
+            .btn-edit {
+                background-color: #4CAF50;
+                color: white;
+            }
+            .btn-edit:hover {
+                background-color: #45a049;
+            }
+            .btn-delete {
+                background-color: #f44336;
+                color: white;
+            }
+            .btn-delete:hover {
+                background-color: #da190b;
+            }
+            .fas {
+                font-size: 14px;
+            }
+            #image-preview img {
+                max-width: 100px;
+                height: auto;
+                border-radius: 5px;
+                margin-top: 10px;
+            }
+            .input-error {
+                border: 2px solid #dc3545 !important;
+                background-color: rgba(220, 53, 69, 0.1) !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add this new function to show messages
+        function showMessage(message, type = 'info') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message message-${type}`;
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 4px;
+                z-index: 1000;
+                color: white;
+                min-width: 300px;
+                max-width: 80%;
+                text-align: center;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                animation: slideIn 0.3s ease;
+            `;
+
+            switch(type) {
+                case 'error':
+                    messageDiv.style.backgroundColor = '#dc3545';
+                    break;
+                case 'success':
+                    messageDiv.style.backgroundColor = '#28a745';
+                    break;
+                case 'warning':
+                    messageDiv.style.backgroundColor = '#ffc107';
+                    break;
+                default:
+                    messageDiv.style.backgroundColor = '#17a2b8';
+            }
+
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+
+            setTimeout(() => {
+                messageDiv.style.opacity = '0';
+                messageDiv.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => messageDiv.remove(), 500);
+            }, 5000);
+        }
+
+        // Add keydown event listener to close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeDeleteModal();
+            }
+        });
+
+        // Add click event listener to close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('deleteModal');
+            if (e.target === modal) {
+                closeDeleteModal();
+            }
+        });
+
+        // Add calculation functions
+        function calculateTotalQuantity(stock) {
+            if (!stock.number_of_items || !stock.fixed_quantity) {
+                return '-';
+            }
+            const totalQuantity = stock.number_of_items * stock.fixed_quantity;
+            return `${totalQuantity.toFixed(2)} kg`;
+        }
+
+        function calculateStockValue(stock) {
+            if (!stock.number_of_items || !stock.fixed_quantity || !stock.actual_price) {
+                return '-';
+            }
+            const totalQuantity = stock.number_of_items * stock.fixed_quantity;
+            const stockValue = totalQuantity * stock.actual_price;
+            return `₹${stockValue.toFixed(2)}`;
+        }
+
+        // Add new function for duplicate product modal
+        function showDuplicateProductModal(productName) {
+            const modal = document.createElement('div');
+            modal.className = 'modal duplicate-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Duplicate Product</h2>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>A product with the name "${productName}" already exists.</p>
+                        <p>Please use a different product name.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-ok">OK</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            modal.style.display = 'block';
+
+            // Close modal handlers
+            const closeBtn = modal.querySelector('.close');
+            const okBtn = modal.querySelector('.btn-ok');
+            const closeModal = () => {
+                modal.style.display = 'none';
+                modal.remove();
+                document.getElementById('product-name').focus();
+            };
+
+            closeBtn.onclick = closeModal;
+            okBtn.onclick = closeModal;
+            window.onclick = (event) => {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            };
+        }
+
+        // Add new function to show error modal
+        function showErrorModal(message) {
+            const modal = document.getElementById('errorModal');
+            const messageElement = document.getElementById('errorMessage');
+            const closeBtn = modal.querySelector('.close');
+            const okBtn = modal.querySelector('.btn-ok');
+
+            messageElement.textContent = message;
+            modal.style.display = 'block';
+
+            const closeModal = () => {
+                modal.style.display = 'none';
+            };
+
+            closeBtn.onclick = closeModal;
+            okBtn.onclick = closeModal;
+            window.onclick = (event) => {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            };
+
+            // Add keyboard support for closing modal
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && modal.style.display === 'block') {
+                    closeModal();
+                }
+            });
+        }
+
+        // Validate product name to check for duplicates
+        let allProducts = []; // Will be populated when fetchStock runs
+        
+        async function validateProductName() {
+            if (isEditing) return; // Skip validation if editing existing product
+            
+            const productNameInput = document.getElementById('product-name');
+            const productName = productNameInput.value.trim();
+            
+            if (!productName) return; // Skip validation if empty
+            
+            try {
+                // If we haven't fetched products yet, fetch them now
+                if (allProducts.length === 0) {
+                    const userId = localStorage.getItem('userId');
+                    const response = await fetch(`${API_BASE_URL}/stock?userId=${userId}`);
+                    const products = await response.json();
+                    allProducts = products;
+                }
+                
+                // Check for duplicate (case insensitive)
+                const duplicate = allProducts.find(p => 
+                    p.product_name.toLowerCase() === productName.toLowerCase());
+                
+                if (duplicate) {
+                    showErrorModal(`A product with the name "${productName}" already exists. Please use a different name.`);
+                    productNameInput.focus();
+                    productNameInput.classList.add('input-error');
+                    return false;
+                } else {
+                    productNameInput.classList.remove('input-error');
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error validating product name:', error);
+                return true; // Allow form submission on error
+            }
+        }
+    </script>
+</body>
+</html>

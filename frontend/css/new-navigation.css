@@ -1,0 +1,141 @@
+/* Base navbar styles */
+.nav-bar {
+    background-color: #4CAF50;
+    padding: 10px 30px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Container for flex layout */
+.nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 40px;
+    overflow-x: auto; /* 🔥 Add horizontal scroll safety */
+    white-space: nowrap;
+    padding-right: 20px; /* 🔥 Prevent clipping at the right edge */
+}
+
+/* Branding (FertilizerManager) */
+.brand {
+    display: flex;
+    align-items: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    margin-right: 20px;
+    white-space: nowrap;
+}
+
+.brand span {
+    color: #ffffff; /* Yellow for 'Manager' */
+}
+
+/* Link container */
+.nav-links {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 25px;
+    overflow-x: auto;
+    padding-right: 20px;  /* 🔥 Prevent overflow on last item */
+    scrollbar-width: none;
+}
+
+.nav-links::-webkit-scrollbar {
+    display: none;
+}
+
+/* Link styles */
+.nav-link {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 6px 14px;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+.nav-link i {
+    margin-right: 8px;
+    font-size: 16px;
+    width: 18px;
+    text-align: center;
+}
+
+/* Hover and Active styles */
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Special: Add margin to the last nav item to prevent cut-off */
+.nav-link:last-child {
+    margin-right: 10px;
+}
+
+/* Body padding to avoid overlay */
+body {
+    padding-top: 60px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 1200px) {
+    .nav-container {
+        gap: 25px;
+        flex-wrap: wrap;
+    }
+
+    .nav-link {
+        font-size: 14px;
+        padding: 6px 10px;
+    }
+
+    .nav-link i {
+        font-size: 14px;
+        margin-right: 6px;
+    }
+
+    .brand {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-bar {
+        padding: 8px 15px;
+    }
+
+    .nav-container {
+        gap: 15px;
+    }
+
+    .nav-link {
+        font-size: 13px;
+        padding: 5px 8px;
+    }
+
+    .nav-link i {
+        font-size: 12px;
+        margin-right: 5px;
+    }
+
+    .brand {
+        font-size: 18px;
+    }
+}

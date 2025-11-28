@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fertilizer Inventory Management</title>
+  <link rel="stylesheet" href="./css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <!-- Profile Modal -->
+  <div id="profileModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-user-circle"></i> Profile Details</h2>
+        <span class="close-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="profile-detail">
+          <i class="fas fa-store"></i>
+          <div class="detail-info">
+            <label>Shop Name</label>
+            <p id="modalShopName"></p>
+          </div>
+        </div>
+        <div class="profile-detail">
+          <i class="fas fa-user"></i>
+          <div class="detail-info">
+            <label>Owner Name</label>
+            <p id="modalOwnerName"></p>
+          </div>
+        </div>
+        <div class="profile-detail">
+          <i class="fas fa-envelope"></i>
+          <div class="detail-info">
+            <label>Email</label>
+            <p id="modalEmail"></p>
+          </div>
+        </div>
+        <div class="profile-detail">
+          <i class="fas fa-phone"></i>
+          <div class="detail-info">
+            <label>Phone</label>
+            <p id="modalPhone"></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <nav>
+      <div class="logo">Fertilizer<span>Manager</span></div>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="afterlogindashboard.html">Features</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="auth-buttons" id="authButtons">
+        <a href="loginpage.html" class="login-btn">Login</a>
+        <a href="signup.html" class="signup-btn">Sign Up</a>
+      </div>
+      <div class="profile-section" id="profileSection" style="display: none;">
+        <div class="profile-info">
+          <div class="profile-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <span class="shop-name" id="shopName"></span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </div>
+        <div class="profile-dropdown">
+          <a href="#" id="viewProfile"><i class="fas fa-user-circle"></i> View Profile</a>
+          <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+<!-- Hero Section -->
+<section id="home" class="hero">
+    <div class="hero-content">
+      <h1>Revolutionize Your Fertilizer Inventory</h1>
+      <p>Efficiently manage, track, and optimize your fertilizer stock with our advanced inventory management system.</p>
+      <div class="cta-buttons">
+        <a href="signup.html" class="cta-button">Get Started</a>
+        <a href="#features" class="cta-button secondary">Learn More</a>
+      </div>
+    </div>
+  </section>
+    <!-- Features Section -->
+<section id="features" class="features">
+    <h2>Why Choose FertilizerManager?</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <i class="fas fa-boxes"></i>
+        <h3>Real-Time Tracking</h3>
+        <p>Monitor your fertilizer stock in real-time with our intuitive dashboard.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-chart-line"></i>
+        <h3>Advanced Analytics</h3>
+        <p>Generate detailed reports and insights for better decision-making.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-truck"></i>
+        <h3>Order Management</h3>
+        <p>Easily manage incoming and outgoing orders with automated notifications.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-bell"></i>
+        <h3>Alerts & Notifications</h3>
+        <p>Get notified about low stock levels, expiring products, and more.</p>
+      </div>
+      <!-- New Feature: Consumer Credit Management -->
+      <div class="feature-card">
+        <i class="fas fa-credit-card"></i>
+        <h3>Consumer Credit Management</h3>
+        <p>Efficiently manage customer credit accounts and payment schedules.</p>
+      </div>
+    </div>
+  </section>
+
+
+
+
+<!-- About Section -->
+<section id="about" class="about">
+    <div class="about-content">
+      <h2>Our Mission</h2>
+      <p class="subtitle">Simplify inventory management for agricultural businesses.</p>
+      <p>At FertilizerManager, our mission is simple to provide farmers and agricultural businesses with the tools they need to manage their fertilizer inventory efficiently. We believe that by simplifying inventory management, we can help reduce waste, save time, and increase productivity.</p>
+  
+      <div class="mission-statement">
+        <h3>Why We Do What We Do</h3>
+        <p>Fertilizer is a critical resource for farmers, but managing it can be challenging. Our platform was designed to address these challenges by offering:</p>
+        <ul>
+          <li><i class="fas fa-check"></i>  Always know what's in stock and what's running low.</li>
+          <li><i class="fas fa-check"></i> Get notified when stock levels are low or when products are nearing expiration.</li>
+          <li><i class="fas fa-check"></i>Perfect for small business inventory management.</li>
+          <li><i class="fas fa-check"></i> A simple interface that anyone can use, regardless of technical expertise.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+      <h2>Contact Us</h2>
+      <p>Have questions or need assistance? Reach out to us!</p>
+      <form class="contact-form">
+        <input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Your Email" required>
+        <textarea placeholder="Your Message" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+      <div class="form-message"></div>
+    </section>
+  </main>
+
+
+    <!-- Call-to-Action Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+          <h2>Ready to Do Your Best Work?</h2>
+          <p>Let's get you started. Sign up now and take control of your fertilizer inventory.</p>
+          <a href="signup.html" class="cta-button">SIGN UP NOW</a>
+        </div>
+      </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>FertilizerManager</h3>
+        <p>Your trusted partner in fertilizer inventory management.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Follow Us</h3>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2023 FertilizerManager. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="./js/dashboard.js"></script>
+  <script src="./js/config.js"></script>
+</body>
+</html>

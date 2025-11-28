@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Suppliers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="./css/new-navigation.css">
+    <link rel="stylesheet" href="./css/suppliers.css">
+    <script src="./js/config.js"></script>
+</head>
+
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <a href="index.html" class="brand">
+                <span class="brand-text">Fertilizer<span>Manager</span></span>
+            </a>
+            <div class="nav-links">
+                <a href="afterlogindashboard.html" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="total-stock.html" class="nav-link">
+                    <i class="fas fa-boxes"></i> TotalStock
+                </a>
+                <a href="low-stock-alerts.html" class="nav-link">
+                    <i class="fas fa-exclamation-triangle"></i> LowStock
+                </a>
+                <a href="expiring-soon.html" class="nav-link">
+                    <i class="fas fa-clock"></i> ExpiringSoon
+                </a>
+                <a href="suppliers.html" class="nav-link active">
+                    <i class="fas fa-truck"></i> Suppliers
+                </a>
+                <a href="order-history.html" class="nav-link">
+                    <i class="fas fa-history"></i> OrderHistory
+                </a>
+                <a href="customers.html" class="nav-link">
+                    <i class="fas fa-users"></i> Customers
+                </a>
+                <a href="sales.html" class="nav-link">
+                    <i class="fas fa-shopping-cart"></i> Sales
+                </a>
+                <a href="credit.html" class="nav-link">
+                    <i class="fas fa-credit-card"></i> Credit
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Manage Suppliers</h1>
+
+        <!-- Add/Edit Supplier Form -->
+        <div class="form-container">
+            <h2 id="form-title">Add New Supplier</h2>
+            <form id="supplier-form" onsubmit="event.preventDefault(); handleSupplier();">
+                <input type="hidden" id="supplier-id">
+                <div class="form-group">
+                    <label for="supplier-name">Supplier Name</label>
+                    <input type="text" id="supplier-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="license-number">License Number / Fertilizer License ID</label>
+                    <input type="text" id="license-number" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required>
+                </div>
+                <button type="submit" id="submit-button" class="btn">
+                    <i class="fas fa-plus"></i> Add Supplier
+                </button>
+                <button type="button" id="cancel-button" class="btn btn-cancel" onclick="resetForm()" style="display: none;">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </form>
+        </div>
+
+        <!-- Suppliers Table -->
+        <div class="table-container">
+            <h2>Suppliers List</h2>
+            <table id="suppliers-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Supplier Name</th>
+                        <th>License Number</th>
+                        <th>Phone Number</th>
+                        <th>Email Address</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let isEditing = false;
+        let currentSupplierId = null;
+
+        // Fetch all suppliers
+        async function fetchSuppliers() {
+            const userId = localStorage.getItem('userId'); // Get userId from local storage
+
+            if (!userId) {
+                alert('User not logged in. Please log in again.');
+                window.location.href = 'loginpage.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/suppliers?userId=${userId}`);
+                const data = await response.json();
+                renderTable(data);
+            } catch (error) {
+                console.error('Error fetching suppliers:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        // Handle Add/Update Supplier
+        async function handleSupplier() {
+            const userId = localStorage.getItem('userId');
+            const supplierName = document.getElementById('supplier-name').value;
+            const licenseNumber = document.getElementById('license-number').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+
+            if (!supplierName || !licenseNumber || !phone || !email || !userId) {
+                alert('All fields are required.');
+                return;
+            }
+
+            const supplierData = {
+                supplierName,
+                licenseNumber,
+                phone,
+                email,
+                userId
+            };
+
+            try {
+                const endpoint = isEditing ? `${API_BASE_URL}/suppliers/${currentSupplierId}` : `${API_BASE_URL}/suppliers`;
+                const method = isEditing ? 'PUT' : 'POST';
+
+                const response = await fetch(endpoint, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(supplierData)
+                });
+
+                const result = await response.text();
+                alert(result);
+                resetForm();
+                fetchSuppliers(); // Refresh the table
+            } catch (error) {
+                console.error('Error handling supplier:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        // Edit Supplier
+        function editSupplier(supplier) {
+            isEditing = true;
+            currentSupplierId = supplier.id;
+
+            document.getElementById('supplier-name').value = supplier.supplier_name;
+            document.getElementById('license-number').value = supplier.license_number;
+            document.getElementById('phone').value = supplier.phone;
+            document.getElementById('email').value = supplier.email;
+
+            document.getElementById('form-title').textContent = 'Edit Supplier';
+            document.getElementById('submit-button').innerHTML = '<i class="fas fa-save"></i> Update Supplier';
+            document.getElementById('cancel-button').style.display = 'inline-block';
+        }
+
+        // Delete Supplier
+        async function deleteSupplier(supplierId) {
+            try {
+                const userId = localStorage.getItem('userId');
+                if (!userId) {
+                    alert('User ID not found. Please log in again.');
+                    window.location.href = 'loginpage.html';
+                    return;
+                }
+
+                const confirmDelete = confirm('Are you sure you want to delete this supplier?');
+                if (!confirmDelete) return;
+
+                const response = await fetch(`${API_BASE_URL}/suppliers/${supplierId}?userId=${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to delete supplier');
+                }
+
+                const result = await response.json();
+                alert(result.message);
+                await fetchSuppliers(); // Refresh the table
+            } catch (error) {
+                console.error('Error deleting supplier:', error);
+                alert(error.message || 'Failed to delete supplier. Please try again.');
+            }
+        }
+
+        // Reset Form
+        function resetForm() {
+            isEditing = false;
+            currentSupplierId = null;
+            document.getElementById('supplier-form').reset();
+            document.getElementById('form-title').textContent = 'Add New Supplier';
+            document.getElementById('submit-button').innerHTML = '<i class="fas fa-plus"></i> Add Supplier';
+            document.getElementById('cancel-button').style.display = 'none';
+        }
+
+        // Render Table
+        function renderTable(data) {
+            const tbody = document.querySelector('#suppliers-table tbody');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            data.forEach((supplier, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${supplier.supplier_name}</td>
+                        <td>${supplier.license_number}</td>
+                        <td>${supplier.phone}</td>
+                        <td>${supplier.email}</td>
+                        <td>
+                            <button class="btn-edit" onclick="editSupplier(${JSON.stringify(supplier).replace(/"/g, '&quot;')})">Edit</button>
+                            <button class="btn-delete" onclick="deleteSupplier(${supplier.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        // Initial fetch
+        fetchSuppliers();
+    </script>
+</body>
+
+</html>
