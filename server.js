@@ -18,7 +18,7 @@ const creditRoutes = require('./backend/routes/creditRoutes');
 const db = require('./backend/config/db');
 
 const app = express();
-const port = process.env.PORT || 8081;
+const port = 3036;
 
 // Middleware
 app.use(bodyParser.json());
@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Updated CORS configuration
 app.use(cors({
-    origin: ['http://localhost:3001', 'http://127.0.0.1:3001', 'http://localhost:5500', 'http://127.0.0.1:5500'],
+    origin: [`http://localhost:${port}`, `http://127.0.0.1:${port}`],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'userId'],
     credentials: true
@@ -128,8 +128,7 @@ async function startServer() {
         console.log('Database connection test successful');
 
         const allowedOrigins = [
-            'http://localhost:3001', 'http://127.0.0.1:3001', 
-            'http://localhost:5500', 'http://127.0.0.1:5500'
+            `http://localhost:${port}`, `http://127.0.0.1:${port}`
         ];
         
         const server = app.listen(port, () => {

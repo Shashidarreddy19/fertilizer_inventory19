@@ -4,11 +4,10 @@ dotenv.config();
 
 // Create the connection pool with enhanced settings
 const pool = mysql.createPool({
-    host: 'myapp-db.cvkuyac060bj.ap-southeast-1.rds.amazonaws.com',
+    host: 'mydb.cvkuyac060bj.ap-southeast-1.rds.amazonaws.com',
     user: 'admin',
     password: 'Fertilizer2025',
     database:'fertilizer_inventory',
-    port: 3036,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
